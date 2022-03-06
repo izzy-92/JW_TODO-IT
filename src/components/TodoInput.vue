@@ -5,19 +5,35 @@
   v-model="newTodoItem" 
   placeholder="Type what you have to do"
   v-on:keyup.enter="addTodo"/>
-  <span class="addContainer" @click="addTodo">
+  <span class="addContainer" @click="addTodo" >
     <i class="addBtn fas fa-plus" aria-hidden="true"></i>
   </span>
+
+  <!-- 경고 모달창 -->
+  <modal :show="showModal" @close="showModal = false">
+    <template #header>
+      <h3>WARNING!</h3>
+    </template>
+    <template #footer @click="showModal =false">
+      <span class="msg">할 일을 입력하세요!</span>
+    </template>
+  </modal>
 </div>
 </template>
 
 <script>
-
+import Modal from './common/Modal.vue'
 
 export default {
+  props: ['propsdata'],
+  components: {
+    // 모달 컴포넌트 추가
+    Modal
+  },
   data() {
     return {
-      newTodoItem: ''
+      newTodoItem: '',
+      showModal: false  // 모달 동작을 위한 플래그 값
     }
   },
   methods: {
@@ -26,8 +42,9 @@ export default {
       if(todo !== "") { // 입력값이 있을때만 저장하도록!
         var value = todo && todo.trim(); // 입력된 텍스트 앞뒤 공백 문자열제거
         this.$emit('addTodo',value);
-        //localStorage.setItem(value, value); 로컬 스토리지에 데이터를 저장하는 기존코드는 주석처리.
         this.clearInput();
+      } else {
+        this.showModal = !this.showModal; // 텍스트 미입력시 모달 동작
       }
     },
     clearInput() { // 입력값 초기화
@@ -38,6 +55,11 @@ export default {
 </script>
 
 <style scoped>
+  .msg {
+    display: inline-block;
+    margin-left: 30px;
+    padding-bottom: 30px;
+  }
   input:focus {
     outline: none;
   }

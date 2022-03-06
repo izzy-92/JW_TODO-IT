@@ -20,27 +20,25 @@ export default {
       todoItems: []
     }
   },
-  created() { // 뷰 인스턴스 생성되자마자 뷰 데이터에 접근하는 라이프사이클
-    const putIn = localStorage.length;
-    if(putIn > 0) {
-      for(var i = 0; i < putIn; i++) {
-        this.todoItems.push(localStorage.key(i));
-      }
+  created() {
+    const list = localStorage.getItem('todoItems');
+    if(list) {
+      this.todoItems = JSON.parse(list);
     }
   },
   methods: {
     // 로컬 스토리지에 데이터를 추가하는 로직
     addTodo(todoItem) {
-      localStorage.setItem(todoItem, todoItem);
       this.todoItems.push(todoItem);
+      localStorage.setItem('todoItems', JSON.stringify(this.todoItems));
     },
     clearAll() {
-      localStorage.clear();
+      localStorage.removeItem('todoItems');
       this.todoItems = [];
     },
     removeTodo(todoItem, index) {
-      localStorage.removeItem(todoItem);
       this.todoItems.splice(index , 1);
+      localStorage.setItem('todoItems', JSON.stringify(this.todoItems));
     }
   },
   components: {
